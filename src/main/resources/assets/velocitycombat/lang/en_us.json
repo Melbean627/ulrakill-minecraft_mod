@@ -2,5 +2,7 @@
   "key.categories.velocitycombat": "Velocity Combat",
   "key.velocitycombat.dash": "Combat Dash",
   "key.velocitycombat.parry": "Parry",
-  "key.velocitycombat.switch_weapon": "Cycle Weapon"
+  "key.velocitycombat.switch_weapon": "Cycle Weapon",
+  "item.velocitycombat.breach_shotgun": "Breach Shotgun",
+  "item.velocitycombat.token_revolver": "Token Revolver"
 }

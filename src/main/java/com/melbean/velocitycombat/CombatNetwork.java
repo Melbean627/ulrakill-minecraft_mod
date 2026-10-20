@@ -5,8 +5,11 @@ import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class CombatNetwork {
@@ -25,10 +28,16 @@ public final class CombatNetwork {
     public static void register() {
         CHANNEL.registerMessage(packetId++, AbilityPacket.class, AbilityPacket::encode,
                 AbilityPacket::decode, AbilityPacket::handle);
+        CHANNEL.registerMessage(packetId++, ParryFeedbackPacket.class, ParryFeedbackPacket::encode,
+                ParryFeedbackPacket::decode, ParryFeedbackPacket::handle);
     }
 
     public static void send(Ability ability) {
         CHANNEL.sendToServer(new AbilityPacket(ability));
+    }
+
+    static void sendParryFeedback(ServerPlayer player) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new ParryFeedbackPacket());
     }
 
     public enum Ability {
@@ -54,6 +63,23 @@ public final class CombatNetwork {
                     CombatEvents.handleAbility(player, packet.ability);
                 }
             });
+            context.setPacketHandled(true);
+        }
+    }
+
+    private record ParryFeedbackPacket() {
+        private static void encode(ParryFeedbackPacket packet, FriendlyByteBuf buffer) {
+        }
+
+        private static ParryFeedbackPacket decode(FriendlyByteBuf buffer) {
+            return new ParryFeedbackPacket();
+        }
+
+        private static void handle(ParryFeedbackPacket packet,
+                Supplier<NetworkEvent.Context> contextSupplier) {
+            NetworkEvent.Context context = contextSupplier.get();
+            context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(
+                    Dist.CLIENT, () -> ClientParryFeedback::trigger));
             context.setPacketHandled(true);
         }
     }

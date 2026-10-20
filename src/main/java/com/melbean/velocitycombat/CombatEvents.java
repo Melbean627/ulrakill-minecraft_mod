@@ -58,6 +58,7 @@ public final class CombatEvents {
         attacker.hurt(player.damageSources().playerAttack(player), 4.0F);
         attacker.knockback(0.8D, player.getX() - attacker.getX(), player.getZ() - attacker.getZ());
         player.getPersistentData().putInt(PARRY_TICKS, 0);
+        CombatNetwork.sendParryFeedback(player);
         awardStyle(player, 500, "PARRY");
     }
 
@@ -70,11 +71,12 @@ public final class CombatEvents {
                 }
                 Vec3 direction = player.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
                 if (direction.lengthSqr() < 0.001D) {
-                    direction = new Vec3(0.0D, 0.0D, 1.0D)
-                            .yRot(-player.getYRot() * ((float) Math.PI / 180F));
+                    direction = new Vec3(0.0D, 0.0D, 1.0D).yRot(
+                            -player.getYRot() * ((float) Math.PI / 180F));
                 }
-                player.setDeltaMovement(player.getDeltaMovement()
-                        .add(direction.normalize().scale(1.25D).add(0.0D, 0.12D, 0.0D)));
+                Vec3 dashVelocity = direction.normalize().scale(1.45D);
+                player.setDeltaMovement(dashVelocity.x,
+                        Math.max(player.getDeltaMovement().y, 0.12D), dashVelocity.z);
                 player.hasImpulse = true;
                 player.setSprinting(true);
                 data.putInt(DASH_COOLDOWN, 20);
