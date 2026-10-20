@@ -37,4 +37,4 @@ On macOS or Linux, run:
 ./gradlew build
 ```
 
-The distributable mod jar is created in `build/libs/velocitycombat-1.3.1.jar`. A ready-to-install copy is checked in at [`release/velocitycombat-1.3.1.jar`](release/velocitycombat-1.3.1.jar). Install Forge 47.2.x for Minecraft 1.20.1 and copy the jar into the instance's `mods` folder, or upload it as a Minecraft Java Forge file on CurseForge.
+The distributable mod jar is created in `build/libs/velocitycombat-1.3.2.jar`. A ready-to-install copy is checked in at [`release/velocitycombat-1.3.2.jar`](release/velocitycombat-1.3.2.jar). Install Forge 47.2.x for Minecraft 1.20.1 and copy the jar into the instance's `mods` folder, or upload it as a Minecraft Java Forge file on CurseForge.

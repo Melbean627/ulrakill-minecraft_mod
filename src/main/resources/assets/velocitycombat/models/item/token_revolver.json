@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
+    "layer0": "velocitycombat:item/blaze_rod",
     "rod": "velocitycombat:item/blaze_rod",
     "coin": "velocitycombat:item/token_coin"
   },

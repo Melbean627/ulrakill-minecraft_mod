@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
+    "layer0": "velocitycombat:item/iron_hoe_metal",
     "handle": "velocitycombat:item/breach_grip",
     "metal": "velocitycombat:item/iron_hoe_metal"
   },
