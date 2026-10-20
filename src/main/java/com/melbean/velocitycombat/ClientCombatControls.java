@@ -87,10 +87,30 @@ public final class ClientCombatControls {
         @SubscribeEvent
         public static void onInteractionInput(InputEvent.InteractionKeyMappingTriggered event) {
             Minecraft minecraft = Minecraft.getInstance();
+            if (ClientParryFeedback.isActive()) {
+                event.setCanceled(true);
+                return;
+            }
             if (event.isAttack() && minecraft.player != null
                     && minecraft.player.getMainHandItem().is(WeaponItems.TOKEN_REVOLVER.get())) {
                 event.setCanceled(true);
                 CombatNetwork.send(CombatNetwork.Ability.FIRE_TOKEN_REVOLVER);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onKeyInput(InputEvent.Key event) {
+            if (ClientParryFeedback.isActive()
+                    && event.getAction() != GLFW.GLFW_RELEASE
+                    && event.getKey() != GLFW.GLFW_KEY_ESCAPE) {
+                event.setCanceled(true);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
+            if (ClientParryFeedback.isActive()) {
+                event.setCanceled(true);
             }
         }
     }

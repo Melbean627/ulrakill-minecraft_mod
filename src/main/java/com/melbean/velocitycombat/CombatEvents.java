@@ -27,6 +27,7 @@ public final class CombatEvents {
     private static final String GROUND_SLAM_COOLDOWN = "velocitycombat_ground_slam_cooldown";
     private static final String GROUND_SLAM_ACTIVE = "velocitycombat_ground_slam_active";
     private static final String GROUND_SLAM_TICKS = "velocitycombat_ground_slam_ticks";
+    private static final String GROUND_SLAM_JUMP_BOOST_TICKS = "velocitycombat_ground_slam_jump_boost_ticks";
     private static final String VITALITY_COOLDOWN = "velocitycombat_vitality_cooldown";
     private static final String PARRY_COOLDOWN = "velocitycombat_parry_cooldown";
     private static final String PARRY_TICKS = "velocitycombat_parry_ticks";
@@ -46,6 +47,7 @@ public final class CombatEvents {
         decrement(data, SLIDE_COOLDOWN);
         decrement(data, WALL_KICK_COOLDOWN);
         decrement(data, GROUND_SLAM_COOLDOWN);
+        decrement(data, GROUND_SLAM_JUMP_BOOST_TICKS);
         decrement(data, VITALITY_COOLDOWN);
         decrement(data, PARRY_COOLDOWN);
         decrement(data, PARRY_TICKS);
@@ -87,12 +89,26 @@ public final class CombatEvents {
 
     @SubscribeEvent
     public void onLivingJump(LivingEvent.LivingJumpEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)
-                || player.getPersistentData().getInt(SLIDE_TICKS) <= 0) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
 
+        var data = player.getPersistentData();
         Vec3 movement = player.getDeltaMovement();
+        boolean groundSlamJumpBoost = data.getInt(GROUND_SLAM_JUMP_BOOST_TICKS) > 0;
+        if (groundSlamJumpBoost) {
+            data.putInt(GROUND_SLAM_JUMP_BOOST_TICKS, 0);
+        }
+
+        if (data.getInt(SLIDE_TICKS) <= 0) {
+            if (groundSlamJumpBoost) {
+                player.setDeltaMovement(movement.x, movement.y * Math.sqrt(2.0D), movement.z);
+                player.hasImpulse = true;
+                player.connection.send(new ClientboundSetEntityMotionPacket(player));
+            }
+            return;
+        }
+
         Vec3 direction = movement.multiply(1.0D, 0.0D, 1.0D);
         if (direction.lengthSqr() < 0.001D) {
             direction = player.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
@@ -105,7 +121,11 @@ public final class CombatEvents {
         double forwardSpeed = Math.max(Math.sqrt(movement.x * movement.x + movement.z * movement.z) * 1.5D,
                 0.52D);
         Vec3 boostedDirection = direction.normalize().scale(forwardSpeed);
-        player.setDeltaMovement(boostedDirection.x, Math.min(movement.y, 0.28D), boostedDirection.z);
+        double jumpVelocity = Math.min(movement.y, 0.28D);
+        if (groundSlamJumpBoost) {
+            jumpVelocity *= Math.sqrt(2.0D);
+        }
+        player.setDeltaMovement(boostedDirection.x, jumpVelocity, boostedDirection.z);
         player.getPersistentData().putInt(SLIDE_TICKS, 0);
         player.hasImpulse = true;
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
@@ -247,6 +267,7 @@ public final class CombatEvents {
             data.putInt(GROUND_SLAM_TICKS, 0);
             if (player instanceof ServerPlayer serverPlayer) {
                 groundSlamImpact(serverPlayer);
+                data.putInt(GROUND_SLAM_JUMP_BOOST_TICKS, 6);
             }
         } else if (ticksRemaining <= 0) {
             data.putBoolean(GROUND_SLAM_ACTIVE, false);

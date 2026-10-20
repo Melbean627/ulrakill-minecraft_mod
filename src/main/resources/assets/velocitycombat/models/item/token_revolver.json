@@ -1,9 +1,8 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "velocitycombat:item/token_frame",
-    "layer1": "velocitycombat:item/token_brass",
-    "layer2": "velocitycombat:item/token_grip"
+    "rod": "velocitycombat:item/blaze_rod",
+    "coin": "velocitycombat:item/token_coin"
   },
   "display": {
     "thirdperson_righthand": {
@@ -44,75 +43,63 @@
   },
   "elements": [
     {
-      "from": [4, 6, 4],
-      "to": [12, 12, 12],
+      "from": [6, 1, 6],
+      "to": [10, 13, 10],
       "faces": {
-        "north": {"texture": "#layer0"},
-        "south": {"texture": "#layer0"},
-        "east": {"texture": "#layer0"},
-        "west": {"texture": "#layer0"},
-        "up": {"texture": "#layer0"},
-        "down": {"texture": "#layer0"}
+        "north": {"texture": "#rod"},
+        "south": {"texture": "#rod"},
+        "east": {"texture": "#rod"},
+        "west": {"texture": "#rod"},
+        "up": {"texture": "#rod"},
+        "down": {"texture": "#rod"}
       }
     },
     {
-      "from": [3, 8, 3],
-      "to": [13, 11, 13],
+      "from": [5, 3, 5],
+      "to": [11, 5, 11],
       "faces": {
-        "north": {"texture": "#layer1"},
-        "south": {"texture": "#layer1"},
-        "east": {"texture": "#layer1"},
-        "west": {"texture": "#layer1"},
-        "up": {"texture": "#layer1"},
-        "down": {"texture": "#layer1"}
+        "north": {"texture": "#rod"},
+        "south": {"texture": "#rod"},
+        "east": {"texture": "#rod"},
+        "west": {"texture": "#rod"},
+        "up": {"texture": "#rod"},
+        "down": {"texture": "#rod"}
       }
     },
     {
-      "from": [6, 11, 6],
+      "from": [5, 8, 5],
+      "to": [11, 10, 11],
+      "faces": {
+        "north": {"texture": "#rod"},
+        "south": {"texture": "#rod"},
+        "east": {"texture": "#rod"},
+        "west": {"texture": "#rod"},
+        "up": {"texture": "#rod"},
+        "down": {"texture": "#rod"}
+      }
+    },
+    {
+      "from": [5, 13, 5],
+      "to": [11, 15, 11],
+      "faces": {
+        "north": {"texture": "#coin"},
+        "south": {"texture": "#coin"},
+        "east": {"texture": "#coin"},
+        "west": {"texture": "#coin"},
+        "up": {"texture": "#coin"},
+        "down": {"texture": "#coin"}
+      }
+    },
+    {
+      "from": [6, 15, 6],
       "to": [10, 16, 10],
       "faces": {
-        "north": {"texture": "#layer0"},
-        "south": {"texture": "#layer0"},
-        "east": {"texture": "#layer0"},
-        "west": {"texture": "#layer0"},
-        "up": {"texture": "#layer0"},
-        "down": {"texture": "#layer0"}
-      }
-    },
-    {
-      "from": [5, 11, 5],
-      "to": [11, 13, 11],
-      "faces": {
-        "north": {"texture": "#layer1"},
-        "south": {"texture": "#layer1"},
-        "east": {"texture": "#layer1"},
-        "west": {"texture": "#layer1"},
-        "up": {"texture": "#layer1"},
-        "down": {"texture": "#layer1"}
-      }
-    },
-    {
-      "from": [6, 1, 6],
-      "to": [10, 6, 10],
-      "faces": {
-        "north": {"texture": "#layer2"},
-        "south": {"texture": "#layer2"},
-        "east": {"texture": "#layer2"},
-        "west": {"texture": "#layer2"},
-        "up": {"texture": "#layer2"},
-        "down": {"texture": "#layer2"}
-      }
-    },
-    {
-      "from": [5, 4, 6],
-      "to": [7, 8, 10],
-      "faces": {
-        "north": {"texture": "#layer1"},
-        "south": {"texture": "#layer1"},
-        "east": {"texture": "#layer1"},
-        "west": {"texture": "#layer1"},
-        "up": {"texture": "#layer1"},
-        "down": {"texture": "#layer1"}
+        "north": {"texture": "#coin"},
+        "south": {"texture": "#coin"},
+        "east": {"texture": "#coin"},
+        "west": {"texture": "#coin"},
+        "up": {"texture": "#coin"},
+        "down": {"texture": "#coin"}
       }
     }
   ]
