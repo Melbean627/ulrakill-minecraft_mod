@@ -2,6 +2,7 @@ package com.melbean.velocitycombat;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -78,6 +79,7 @@ public final class CombatEvents {
                 player.setDeltaMovement(dashVelocity.x,
                         Math.max(player.getDeltaMovement().y, 0.12D), dashVelocity.z);
                 player.hasImpulse = true;
+                player.connection.send(new ClientboundSetEntityMotionPacket(player));
                 player.setSprinting(true);
                 data.putInt(DASH_COOLDOWN, 20);
             }
