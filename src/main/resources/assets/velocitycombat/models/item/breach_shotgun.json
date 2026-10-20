@@ -1,6 +1,82 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "minecraft:item/iron_hoe"
-  }
+    "layer0": "minecraft:item/iron_ingot",
+    "layer1": "minecraft:item/coal",
+    "layer2": "minecraft:item/leather"
+  },
+  "elements": [
+    {
+      "from": [0, 6, 6],
+      "to": [5, 10, 10],
+      "faces": {
+        "north": {"texture": "#layer2"},
+        "south": {"texture": "#layer2"},
+        "east": {"texture": "#layer2"},
+        "west": {"texture": "#layer2"},
+        "up": {"texture": "#layer2"},
+        "down": {"texture": "#layer2"}
+      }
+    },
+    {
+      "from": [3, 5, 4],
+      "to": [11, 11, 12],
+      "faces": {
+        "north": {"texture": "#layer0"},
+        "south": {"texture": "#layer0"},
+        "east": {"texture": "#layer0"},
+        "west": {"texture": "#layer0"},
+        "up": {"texture": "#layer0"},
+        "down": {"texture": "#layer0"}
+      }
+    },
+    {
+      "from": [9, 8, 6],
+      "to": [16, 10, 10],
+      "faces": {
+        "north": {"texture": "#layer1"},
+        "south": {"texture": "#layer1"},
+        "east": {"texture": "#layer1"},
+        "west": {"texture": "#layer1"},
+        "up": {"texture": "#layer1"},
+        "down": {"texture": "#layer1"}
+      }
+    },
+    {
+      "from": [5, 11, 6],
+      "to": [11, 13, 10],
+      "faces": {
+        "north": {"texture": "#layer1"},
+        "south": {"texture": "#layer1"},
+        "east": {"texture": "#layer1"},
+        "west": {"texture": "#layer1"},
+        "up": {"texture": "#layer1"},
+        "down": {"texture": "#layer1"}
+      }
+    },
+    {
+      "from": [6, 1, 6],
+      "to": [9, 6, 10],
+      "faces": {
+        "north": {"texture": "#layer2"},
+        "south": {"texture": "#layer2"},
+        "east": {"texture": "#layer2"},
+        "west": {"texture": "#layer2"},
+        "up": {"texture": "#layer2"},
+        "down": {"texture": "#layer2"}
+      }
+    },
+    {
+      "from": [8, 6, 5],
+      "to": [11, 8, 11],
+      "faces": {
+        "north": {"texture": "#layer2"},
+        "south": {"texture": "#layer2"},
+        "east": {"texture": "#layer2"},
+        "west": {"texture": "#layer2"},
+        "up": {"texture": "#layer2"},
+        "down": {"texture": "#layer2"}
+      }
+    }
+  ]
 }

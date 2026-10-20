@@ -92,6 +92,7 @@ public final class CombatEvents {
                 player.displayClientMessage(Component.literal("PARRY READY"), true);
             }
             case SWITCH_WEAPON -> switchWeapon(player);
+            case FIRE_TOKEN_REVOLVER -> WeaponItems.fireTokenRevolver(player);
         }
     }
 

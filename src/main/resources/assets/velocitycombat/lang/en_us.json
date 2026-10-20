@@ -4,5 +4,7 @@
   "key.velocitycombat.parry": "Parry",
   "key.velocitycombat.switch_weapon": "Cycle Weapon",
   "item.velocitycombat.breach_shotgun": "Breach Shotgun",
-  "item.velocitycombat.token_revolver": "Token Revolver"
+  "item.velocitycombat.token_revolver": "Token Revolver",
+  "item.velocitycombat.token_round": "Token Round",
+  "entity.velocitycombat.token_projectile": "Token Round"
 }

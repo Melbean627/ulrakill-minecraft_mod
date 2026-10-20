@@ -12,6 +12,7 @@ public final class VelocityCombat {
     public VelocityCombat() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         WeaponItems.register(modEventBus);
+        CombatEntities.register(modEventBus);
         modEventBus.addListener(WeaponItems::addToCreativeTab);
         CombatNetwork.register();
         MinecraftForge.EVENT_BUS.register(new CombatEvents());

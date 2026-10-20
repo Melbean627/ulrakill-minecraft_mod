@@ -1,6 +1,94 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "minecraft:item/gold_ingot"
-  }
+    "layer0": "minecraft:item/iron_ingot",
+    "layer1": "minecraft:item/gold_ingot",
+    "layer2": "minecraft:item/leather"
+  },
+  "elements": [
+    {
+      "from": [3, 6, 4],
+      "to": [10, 12, 12],
+      "faces": {
+        "north": {"texture": "#layer0"},
+        "south": {"texture": "#layer0"},
+        "east": {"texture": "#layer0"},
+        "west": {"texture": "#layer0"},
+        "up": {"texture": "#layer0"},
+        "down": {"texture": "#layer0"}
+      }
+    },
+    {
+      "from": [7, 7, 3],
+      "to": [10, 11, 13],
+      "faces": {
+        "north": {"texture": "#layer1"},
+        "south": {"texture": "#layer1"},
+        "east": {"texture": "#layer1"},
+        "west": {"texture": "#layer1"},
+        "up": {"texture": "#layer1"},
+        "down": {"texture": "#layer1"}
+      }
+    },
+    {
+      "from": [9, 8, 6],
+      "to": [16, 10, 10],
+      "faces": {
+        "north": {"texture": "#layer0"},
+        "south": {"texture": "#layer0"},
+        "east": {"texture": "#layer0"},
+        "west": {"texture": "#layer0"},
+        "up": {"texture": "#layer0"},
+        "down": {"texture": "#layer0"}
+      }
+    },
+    {
+      "from": [11, 10, 6],
+      "to": [14, 12, 10],
+      "faces": {
+        "north": {"texture": "#layer1"},
+        "south": {"texture": "#layer1"},
+        "east": {"texture": "#layer1"},
+        "west": {"texture": "#layer1"},
+        "up": {"texture": "#layer1"},
+        "down": {"texture": "#layer1"}
+      }
+    },
+    {
+      "from": [3, 1, 5],
+      "to": [6, 6, 11],
+      "faces": {
+        "north": {"texture": "#layer2"},
+        "south": {"texture": "#layer2"},
+        "east": {"texture": "#layer2"},
+        "west": {"texture": "#layer2"},
+        "up": {"texture": "#layer2"},
+        "down": {"texture": "#layer2"}
+      }
+    },
+    {
+      "from": [2, 6, 6],
+      "to": [4, 11, 10],
+      "faces": {
+        "north": {"texture": "#layer1"},
+        "south": {"texture": "#layer1"},
+        "east": {"texture": "#layer1"},
+        "west": {"texture": "#layer1"},
+        "up": {"texture": "#layer1"},
+        "down": {"texture": "#layer1"}
+      }
+    },
+    {
+      "from": [4, 10, 6],
+      "to": [6, 12, 10],
+      "faces": {
+        "north": {"texture": "#layer1"},
+        "south": {"texture": "#layer1"},
+        "east": {"texture": "#layer1"},
+        "west": {"texture": "#layer1"},
+        "up": {"texture": "#layer1"},
+        "down": {"texture": "#layer1"}
+      }
+    }
+  ]
 }

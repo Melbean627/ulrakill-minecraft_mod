@@ -26,6 +26,6 @@ public final class ClientParryFeedback {
         }
         Minecraft minecraft = Minecraft.getInstance();
         event.getGuiGraphics().fill(0, 0, minecraft.getWindow().getGuiScaledWidth(),
-                minecraft.getWindow().getGuiScaledHeight(), 0xFFFFFFFF);
+                minecraft.getWindow().getGuiScaledHeight(), 0x80FFFFFF);
     }
 }

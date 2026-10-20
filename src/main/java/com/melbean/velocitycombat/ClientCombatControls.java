@@ -2,7 +2,9 @@ package com.melbean.velocitycombat;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,6 +51,16 @@ public final class ClientCombatControls {
             }
             while (SWITCH_WEAPON.consumeClick()) {
                 CombatNetwork.send(CombatNetwork.Ability.SWITCH_WEAPON);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onInteractionInput(InputEvent.InteractionKeyMappingTriggered event) {
+            Minecraft minecraft = Minecraft.getInstance();
+            if (event.isAttack() && minecraft.player != null
+                    && minecraft.player.getMainHandItem().is(WeaponItems.TOKEN_REVOLVER.get())) {
+                event.setCanceled(true);
+                CombatNetwork.send(CombatNetwork.Ability.FIRE_TOKEN_REVOLVER);
             }
         }
     }
