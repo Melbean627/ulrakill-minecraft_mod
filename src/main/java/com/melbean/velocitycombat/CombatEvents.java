@@ -9,10 +9,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public final class CombatEvents {
     private static final String DASH_COOLDOWN = "velocitycombat_dash_cooldown";
+    private static final String SLIDE_TICKS = "velocitycombat_slide_ticks";
+    private static final String SLIDE_COOLDOWN = "velocitycombat_slide_cooldown";
     private static final String PARRY_COOLDOWN = "velocitycombat_parry_cooldown";
     private static final String PARRY_TICKS = "velocitycombat_parry_ticks";
     private static final String COMBO = "velocitycombat_combo";
@@ -27,6 +30,8 @@ public final class CombatEvents {
 
         var data = event.player.getPersistentData();
         decrement(data, DASH_COOLDOWN);
+        decrement(data, SLIDE_TICKS);
+        decrement(data, SLIDE_COOLDOWN);
         decrement(data, PARRY_COOLDOWN);
         decrement(data, PARRY_TICKS);
         int comboTicks = data.getInt(COMBO_TICKS);
@@ -44,6 +49,32 @@ public final class CombatEvents {
                 && event.getAmount() > 0.0F) {
             awardStyle(player, 100, "HIT");
         }
+    }
+
+    @SubscribeEvent
+    public void onLivingJump(LivingEvent.LivingJumpEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)
+                || player.getPersistentData().getInt(SLIDE_TICKS) <= 0) {
+            return;
+        }
+
+        Vec3 movement = player.getDeltaMovement();
+        Vec3 direction = movement.multiply(1.0D, 0.0D, 1.0D);
+        if (direction.lengthSqr() < 0.001D) {
+            direction = player.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        }
+        if (direction.lengthSqr() < 0.001D) {
+            direction = new Vec3(0.0D, 0.0D, 1.0D).yRot(
+                    -player.getYRot() * ((float) Math.PI / 180F));
+        }
+
+        double forwardSpeed = Math.max(Math.sqrt(movement.x * movement.x + movement.z * movement.z) * 1.5D,
+                0.52D);
+        Vec3 boostedDirection = direction.normalize().scale(forwardSpeed);
+        player.setDeltaMovement(boostedDirection.x, Math.min(movement.y, 0.28D), boostedDirection.z);
+        player.getPersistentData().putInt(SLIDE_TICKS, 0);
+        player.hasImpulse = true;
+        player.connection.send(new ClientboundSetEntityMotionPacket(player));
     }
 
     @SubscribeEvent
@@ -82,6 +113,31 @@ public final class CombatEvents {
                 player.connection.send(new ClientboundSetEntityMotionPacket(player));
                 player.setSprinting(true);
                 data.putInt(DASH_COOLDOWN, 20);
+            }
+            case SLIDE -> {
+                if (data.getInt(SLIDE_COOLDOWN) > 0 || !player.onGround()) {
+                    return;
+                }
+
+                Vec3 movement = player.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D);
+                if (!player.isSprinting() && movement.lengthSqr() <= 0.01D) {
+                    return;
+                }
+
+                Vec3 direction = player.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+                if (direction.lengthSqr() < 0.001D) {
+                    direction = movement;
+                }
+                if (direction.lengthSqr() < 0.001D) {
+                    return;
+                }
+
+                Vec3 slideVelocity = direction.normalize().scale(0.48D);
+                player.setDeltaMovement(slideVelocity.x, movement.y, slideVelocity.z);
+                player.getPersistentData().putInt(SLIDE_TICKS, 12);
+                player.getPersistentData().putInt(SLIDE_COOLDOWN, 8);
+                player.hasImpulse = true;
+                player.connection.send(new ClientboundSetEntityMotionPacket(player));
             }
             case PARRY -> {
                 if (data.getInt(PARRY_COOLDOWN) > 0) {
