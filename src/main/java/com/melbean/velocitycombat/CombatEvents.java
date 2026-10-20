@@ -3,12 +3,19 @@ package com.melbean.velocitycombat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,6 +23,11 @@ public final class CombatEvents {
     private static final String DASH_COOLDOWN = "velocitycombat_dash_cooldown";
     private static final String SLIDE_TICKS = "velocitycombat_slide_ticks";
     private static final String SLIDE_COOLDOWN = "velocitycombat_slide_cooldown";
+    private static final String WALL_KICK_COOLDOWN = "velocitycombat_wall_kick_cooldown";
+    private static final String GROUND_SLAM_COOLDOWN = "velocitycombat_ground_slam_cooldown";
+    private static final String GROUND_SLAM_ACTIVE = "velocitycombat_ground_slam_active";
+    private static final String GROUND_SLAM_TICKS = "velocitycombat_ground_slam_ticks";
+    private static final String VITALITY_COOLDOWN = "velocitycombat_vitality_cooldown";
     private static final String PARRY_COOLDOWN = "velocitycombat_parry_cooldown";
     private static final String PARRY_TICKS = "velocitycombat_parry_ticks";
     private static final String COMBO = "velocitycombat_combo";
@@ -32,8 +44,12 @@ public final class CombatEvents {
         decrement(data, DASH_COOLDOWN);
         decrement(data, SLIDE_TICKS);
         decrement(data, SLIDE_COOLDOWN);
+        decrement(data, WALL_KICK_COOLDOWN);
+        decrement(data, GROUND_SLAM_COOLDOWN);
+        decrement(data, VITALITY_COOLDOWN);
         decrement(data, PARRY_COOLDOWN);
         decrement(data, PARRY_TICKS);
+        tickGroundSlam(event.player);
         int comboTicks = data.getInt(COMBO_TICKS);
         if (comboTicks > 0) {
             data.putInt(COMBO_TICKS, comboTicks - 1);
@@ -48,6 +64,24 @@ public final class CombatEvents {
         if (event.getSource().getEntity() instanceof ServerPlayer player
                 && event.getAmount() > 0.0F) {
             awardStyle(player, 100, "HIT");
+            if (event.getSource().getDirectEntity() == player
+                    && player.distanceToSqr(event.getEntity()) <= 9.0D
+                    && !player.getMainHandItem().is(WeaponItems.BREACH_SHOTGUN.get())
+                    && !player.getMainHandItem().is(WeaponItems.TOKEN_REVOLVER.get())
+                    && player.getPersistentData().getInt(GROUND_SLAM_COOLDOWN) <= 0
+                    && player.getHealth() < player.getMaxHealth()
+                    && player.getPersistentData().getInt(VITALITY_COOLDOWN) <= 0) {
+                player.heal(1.0F);
+                player.getPersistentData().putInt(VITALITY_COOLDOWN, 20);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingFall(LivingFallEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player
+                && player.getPersistentData().getBoolean(GROUND_SLAM_ACTIVE)) {
+            event.setCanceled(true);
         }
     }
 
@@ -139,6 +173,8 @@ public final class CombatEvents {
                 player.hasImpulse = true;
                 player.connection.send(new ClientboundSetEntityMotionPacket(player));
             }
+            case WALL_KICK -> wallKick(player);
+            case GROUND_SLAM -> startGroundSlam(player);
             case PARRY -> {
                 if (data.getInt(PARRY_COOLDOWN) > 0) {
                     return;
@@ -150,6 +186,93 @@ public final class CombatEvents {
             case SWITCH_WEAPON -> switchWeapon(player);
             case FIRE_TOKEN_REVOLVER -> WeaponItems.fireTokenRevolver(player);
         }
+    }
+
+    private static void wallKick(ServerPlayer player) {
+        var data = player.getPersistentData();
+        if (player.onGround() || data.getInt(WALL_KICK_COOLDOWN) > 0
+                || data.getBoolean(GROUND_SLAM_ACTIVE)) {
+            return;
+        }
+
+        AABB bounds = player.getBoundingBox();
+        Vec3[] wallDirections = {
+                new Vec3(0.0D, 0.0D, 1.0D),
+                new Vec3(0.0D, 0.0D, -1.0D),
+                new Vec3(1.0D, 0.0D, 0.0D),
+                new Vec3(-1.0D, 0.0D, 0.0D)
+        };
+        for (Vec3 towardWall : wallDirections) {
+            if (player.level().noCollision(player, bounds.move(towardWall.scale(0.28D)))) {
+                continue;
+            }
+
+            Vec3 kick = towardWall.scale(-0.62D);
+            player.setDeltaMovement(kick.x, Math.max(player.getDeltaMovement().y, 0.52D), kick.z);
+            player.hasImpulse = true;
+            player.connection.send(new ClientboundSetEntityMotionPacket(player));
+            data.putInt(WALL_KICK_COOLDOWN, 8);
+            player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP,
+                    SoundSource.PLAYERS, 0.6F, 1.5F);
+            return;
+        }
+    }
+
+    private static void startGroundSlam(ServerPlayer player) {
+        var data = player.getPersistentData();
+        if (player.onGround() || data.getInt(GROUND_SLAM_COOLDOWN) > 0
+                || data.getBoolean(GROUND_SLAM_ACTIVE)) {
+            return;
+        }
+
+        data.putBoolean(GROUND_SLAM_ACTIVE, true);
+        data.putInt(GROUND_SLAM_TICKS, 60);
+        data.putInt(GROUND_SLAM_COOLDOWN, 40);
+        Vec3 movement = player.getDeltaMovement();
+        player.setDeltaMovement(movement.x, Math.min(movement.y, -1.8D), movement.z);
+        player.hasImpulse = true;
+        player.connection.send(new ClientboundSetEntityMotionPacket(player));
+    }
+
+    private static void tickGroundSlam(Player player) {
+        var data = player.getPersistentData();
+        if (!data.getBoolean(GROUND_SLAM_ACTIVE)) {
+            return;
+        }
+
+        int ticksRemaining = data.getInt(GROUND_SLAM_TICKS) - 1;
+        data.putInt(GROUND_SLAM_TICKS, ticksRemaining);
+        if (player.onGround()) {
+            data.putBoolean(GROUND_SLAM_ACTIVE, false);
+            data.putInt(GROUND_SLAM_TICKS, 0);
+            if (player instanceof ServerPlayer serverPlayer) {
+                groundSlamImpact(serverPlayer);
+            }
+        } else if (ticksRemaining <= 0) {
+            data.putBoolean(GROUND_SLAM_ACTIVE, false);
+            data.putInt(GROUND_SLAM_TICKS, 0);
+        }
+    }
+
+    private static void groundSlamImpact(ServerPlayer player) {
+        AABB area = player.getBoundingBox().inflate(4.0D, 1.5D, 4.0D);
+        for (LivingEntity target : player.level().getEntitiesOfClass(LivingEntity.class, area,
+                candidate -> candidate != player && candidate.isAlive() && !candidate.isAlliedTo(player))) {
+            target.hurt(player.damageSources().playerAttack(player), 6.0F);
+            double dx = target.getX() - player.getX();
+            double dz = target.getZ() - player.getZ();
+            target.knockback(0.8D, -dx, -dz);
+            target.setDeltaMovement(target.getDeltaMovement().add(0.0D, 0.25D, 0.0D));
+        }
+        player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE,
+                SoundSource.PLAYERS, 0.8F, 1.2F);
+        if (player.level() instanceof ServerLevel level) {
+            level.sendParticles(ParticleTypes.EXPLOSION, player.getX(), player.getY() + 0.1D,
+                    player.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() + 0.1D,
+                    player.getZ(), 24, 1.5D, 0.1D, 1.5D, 0.08D);
+        }
+        awardStyle(player, 250, "GROUND SLAM");
     }
 
     private static void switchWeapon(ServerPlayer player) {

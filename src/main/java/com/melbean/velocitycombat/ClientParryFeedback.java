@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = VelocityCombat.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE,
         value = Dist.CLIENT)
 public final class ClientParryFeedback {
-    private static final long FLASH_DURATION_NANOS = 100_000_000L;
+    private static final long FLASH_DURATION_NANOS = 300_000_000L;
     private static long flashEndsAt;
 
     private ClientParryFeedback() {

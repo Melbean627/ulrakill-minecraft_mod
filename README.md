@@ -1,6 +1,6 @@
 # Velocity Combat
 
-Velocity Combat is an original Minecraft Forge mod focused on fast, skill-driven combat. It adds a short burst dash, a timed parry that counters incoming melee attacks, two hitscan weapons, quick hotbar weapon cycling, and a combo/style score for landing hits and parries.
+Velocity Combat is an original Minecraft Forge mod focused on fast, skill-driven combat. It adds a short burst dash, a timed parry that counters incoming melee attacks, two custom weapons, advanced movement abilities, close-combat vitality recovery, quick hotbar weapon cycling, and a combo/style score.
 
 ## Compatibility
 
@@ -14,12 +14,14 @@ Velocity Combat is an original Minecraft Forge mod focused on fast, skill-driven
 | --- | --- | --- |
 | Combat Dash | R | Burst in the direction you are looking; 1-second cooldown |
 | Combat Slide | Left Shift | While sprinting on the ground, tap to slide forward; normal sneak is unchanged when not running |
+| Wall Kick | Jump (Space) | Jump against a wall while airborne to kick away and gain height |
+| Ground Slam | X | While airborne, dive down and create a damaging knockback shockwave on landing |
 | Parry | G | Open an 8-tick parry window; 2-second cooldown |
 | Cycle Weapon | V | Select the next occupied hotbar slot |
 | Fire shotgun / launch token | Right-click | Fire the Breach Shotgun or throw a Token Round from the Token Revolver |
 | Fire Token Revolver | Left-click | Shoot; aim through a flying token to send it toward the nearest visible enemy |
 
-The Breach Shotgun fires a close-range spread of pellets. Right-clicking the Token Revolver launches a physical Token Round; left-clicking fires the gun, and a shot that intersects a thrown token sends it homing toward the nearest visible enemy. Jumping during a slide boosts forward speed while limiting jump height. The weapons have custom cuboid 3D item models built with opaque vanilla block textures and explicit first-person, third-person, and GUI transforms, and are available in the Combat creative tab. All controls can be changed in Minecraft's Controls menu. Successful hits and parries build a combo and award style points, shown in the action bar. A successful parry flashes the parrying player's screen white at 50% opacity for 0.1 seconds; this local visual hit-stop does not pause the server or other players. The combo expires after 5 seconds without another scored action.
+The Breach Shotgun fires a close-range spread of pellets. Right-clicking the Token Revolver launches a physical Token Round; left-clicking fires the gun, and a shot that intersects a thrown token sends it homing toward the nearest visible enemy. Jumping during a slide boosts forward speed while limiting jump height. Wall Kick uses the normal jump button against nearby walls while airborne. Ground Slam dives down and creates a damaging knockback shockwave on landing. Vitality restores half a heart on a close-range direct melee hit, with a short cooldown. Both weapons use custom 3D geometry, dedicated pixel textures, and explicit first-person, third-person, and GUI transforms; they are available in the Combat creative tab. All controls can be changed in Minecraft's Controls menu. Successful hits and parries build a combo and award style points, shown in the action bar. A successful parry flashes the parrying player's screen white at 50% opacity for 0.3 seconds; this local visual hit-stop does not pause the server or other players. The combo expires after 5 seconds without another scored action.
 
 ## Build
 
@@ -35,4 +37,4 @@ On macOS or Linux, run:
 ./gradlew build
 ```
 
-The distributable mod jar is created in `build/libs/velocitycombat-1.2.1.jar`. A ready-to-install copy is checked in at [`release/velocitycombat-1.2.1.jar`](release/velocitycombat-1.2.1.jar). Install Forge 47.2.x for Minecraft 1.20.1 and copy the jar into the instance's `mods` folder, or upload it as a Minecraft Java Forge file on CurseForge.
+The distributable mod jar is created in `build/libs/velocitycombat-1.3.0.jar`. A ready-to-install copy is checked in at [`release/velocitycombat-1.3.0.jar`](release/velocitycombat-1.3.0.jar). Install Forge 47.2.x for Minecraft 1.20.1 and copy the jar into the instance's `mods` folder, or upload it as a Minecraft Java Forge file on CurseForge.

@@ -13,7 +13,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class CombatNetwork {
-    private static final String PROTOCOL_VERSION = "3";
+    private static final String PROTOCOL_VERSION = "4";
     private static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(VelocityCombat.MOD_ID, "main"))
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
@@ -43,6 +43,8 @@ public final class CombatNetwork {
     public enum Ability {
         DASH,
         SLIDE,
+        WALL_KICK,
+        GROUND_SLAM,
         PARRY,
         SWITCH_WEAPON,
         FIRE_TOKEN_REVOLVER

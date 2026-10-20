@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "minecraft:block/iron_block",
-    "layer1": "minecraft:block/gold_block",
-    "layer2": "minecraft:block/brown_terracotta"
+    "layer0": "velocitycombat:item/token_frame",
+    "layer1": "velocitycombat:item/token_brass",
+    "layer2": "velocitycombat:item/token_grip"
   },
   "display": {
     "thirdperson_righthand": {

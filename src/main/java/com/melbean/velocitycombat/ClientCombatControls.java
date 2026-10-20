@@ -19,6 +19,9 @@ public final class ClientCombatControls {
     private static final KeyMapping SLIDE = new KeyMapping(
             "key.velocitycombat.slide", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_SHIFT,
             "key.categories.velocitycombat");
+    private static final KeyMapping GROUND_SLAM = new KeyMapping(
+            "key.velocitycombat.ground_slam", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_X,
+            "key.categories.velocitycombat");
     private static final KeyMapping PARRY = new KeyMapping(
             "key.velocitycombat.parry", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G,
             "key.categories.velocitycombat");
@@ -33,6 +36,7 @@ public final class ClientCombatControls {
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(DASH);
         event.register(SLIDE);
+        event.register(GROUND_SLAM);
         event.register(PARRY);
         event.register(SWITCH_WEAPON);
     }
@@ -60,6 +64,17 @@ public final class ClientCombatControls {
                         || movement.x * movement.x + movement.z * movement.z > 0.01D) {
                     CombatNetwork.send(CombatNetwork.Ability.SLIDE);
                 }
+            }
+            while (GROUND_SLAM.consumeClick()) {
+                Minecraft minecraft = Minecraft.getInstance();
+                if (minecraft.player != null && !minecraft.player.onGround()) {
+                    CombatNetwork.send(CombatNetwork.Ability.GROUND_SLAM);
+                }
+            }
+            Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft.player != null && !minecraft.player.onGround()
+                    && minecraft.options.keyJump.consumeClick()) {
+                CombatNetwork.send(CombatNetwork.Ability.WALL_KICK);
             }
             while (PARRY.consumeClick()) {
                 CombatNetwork.send(CombatNetwork.Ability.PARRY);
