@@ -1,14 +1,15 @@
 package com.melbean.velocitycombat;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(VelocityCombat.MOD_ID)
+@Mod(value = VelocityCombat.MOD_ID, dist = Dist.CLIENT)
 public final class VelocityCombat {
     public static final String MOD_ID = "velocitycombat";
 
     public VelocityCombat() {
-        CombatNetwork.register();
-        MinecraftForge.EVENT_BUS.register(new CombatEvents());
+        MinecraftForge.EVENT_BUS.register(new ClientVisualFX());
+        MinecraftForge.EVENT_BUS.register(ClientCombatControls.ClientEvents.class);
     }
 }
